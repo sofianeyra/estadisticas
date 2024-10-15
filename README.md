@@ -1,3 +1,3 @@
-### Estadisticas con React
+### Buscador con API generada 
 
-![Imgur](https://i.imgur.com/T5ZhV6z.png)
+![Imgur](https://i.imgur.com/t3snBUZ.png)
