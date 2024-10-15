@@ -4,12 +4,11 @@ body {
 }
 
 .navbar {
-    background-color: #3949ab !important;
     box-shadow: 0 8px 14px 0 rgba(123, 120, 120, 0.22);
 }
 
 .navbar-brand {
-    color: #fff;
+    color: #ffffff;
 }
 
 .navbar-brand:hover {
@@ -26,12 +25,18 @@ body {
 }
 
 .card-body img {
-    width: 25px;
-    opacity: 0.2;
+    width: 120px;
 }
 
-.card-deck>.card:nth-child(2) .card-body>img {
-    width: 20px;
+.info {
+    display: flex;
+    gap: 10px;
+    justify-content: left ;
+    align-items: start;
+}
+
+.info p, .info h6{
+    margin: 0 !important;
 }
 
 @media (min-width:576px) {

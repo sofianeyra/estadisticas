@@ -3,7 +3,7 @@ import React from 'react';
 const Header = props => {
     const {branding} = props;
     return (
-        <nav className="navbar mb-3 pt-3 pb-3 py-0  text-sm-center text-md-left">
+        <nav className="navbar mb-3 pt-3 pb-3 py-0  text-sm-center text-md-left bg-dark bg-gradient">
             <div className="container">
             <a href="/" className="navbar-brand">
                 {branding}
@@ -21,7 +21,7 @@ const Header = props => {
 };
 
 Header.defaultProps = {
-    branding: "Estadisticas con React"
+    branding: "Buscador Personas"
 };
 
 export default Header;

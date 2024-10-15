@@ -11,9 +11,12 @@ ReactFC.fcRoot(FusionCharts, Charts, Widgets, FusionTheme);
 class Body extends React.Component {
     constructor(props) {
         super(props);
-        this.BASE_URL = "https://worldwide-hotels.p.rapidapi.com/";
+        this.BASE_URL = "https://670ec8613e7151861655c338.mockapi.io/hoteles/hotels";
             this.chartRef = null;
             this.state = {
+                content: [],
+                currentPage: 1,
+                itemsPerPage: 15,
                 cuantos: '-',
                 ok: "",
                 hotels: '-',
@@ -56,47 +59,38 @@ class Body extends React.Component {
     }
 
     componentDidMount() {
-        this.getDataFor("search", "cuantos");
-        this.getDataFor("search", "ok");
-        this.getDataFor("search", "hotels");
+        this.getDataFor("cuantos");
+        this.getDataFor("ok");
+        this.getDataFor("hotels");
     }
 
-    startUpdatingData() {
-        // setInterval(() => {
-        //     fetch(this.BASE_URL + "search")
-        //     .then(res => res.json())
-        //     .then(d => {
-        //         let x_axis = this.clientDateTime();
-        //         let y_axis = d.cuantos;
-        //         this.chartRef.feedData("&label=" + x_axis + "&value=" + y_axis);
-        //     });
-        // }, 5000);
-    }
+     // Método para cambiar de página
+     handlePageChange = (pageNumber) => {
+      this.setState({ currentPage: pageNumber });
+     }
 
-    getDataFor(hoteles, prop) {
-        fetch(this.BASE_URL + hoteles, {
-            mode: 'cors'
+    getDataFor(prop) {
+        fetch(this.BASE_URL, {
+            mode: 'cors',
+            
         })
         .then(res => res.json())
         .then(d => {
             if(prop === "cuantos"){
                 const dataSource = this.state.dataSource;
-                dataSource.chart.yAxisMaxValue = parseInt(d.cuantos)
-                dataSource.chart.yAxisMinValue = parseInt(d.cuantos)
-                console.log(JSON.stringify(dataSource));
-                dataSource.dataset[0]["data"][0].value = d.cuantos;
+                dataSource.chart.yAxisMaxValue = parseInt(d.length)
+                dataSource.chart.yAxisMinValue = parseInt(d.length)
+                dataSource.dataset[0]["data"][0].value = d.length;
                 this.setState({
                     showChart: true,
                     dataSource: dataSource,
-                    initValue: d.cuantos
-                },
-                () => {
-                    this.startUpdatingData();
+                    initValue: d.length
                 });
             }
             this.setState({
-                cuantos: d.cuantos,
-                hotels: d.hotels.stars
+                cuantos: d.length,
+                hotels: d.stars,
+                content: d
             });
         });
     }
@@ -118,45 +112,53 @@ class Body extends React.Component {
         this.chartRef = chart;
       }
       render() {
+        const { content, currentPage, itemsPerPage } = this.state;
+
+    // Calcular los índices de los elementos a mostrar
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage; 
+    const currentItems = content.slice(indexOfFirstItem, indexOfLastItem); 
+
+    const totalPages = Math.ceil(content.length / itemsPerPage);
         return (
           <div className="row mt-5 mt-xs-4">
             <div className="col-12 mb-3">
               <div className="card-deck custom-card-deck">
-                <PrecioCard
-                  header="Registro Total:"
-                  src={""}
-                  alt="fireSpot"
-                  label="(Lugares)"
-                  value={this.state.cuantos}
-                />
-                <PrecioCard
-                  header="Un texto"
-                  src={""}
-                  alt="fireSpot"
-                  label="(cosas)"
-                  value={this.state.ok}
-                />
-                <PrecioCard
-                  header="Un Texto"
-                  src={""}
-                  alt="fireSpot"
-                  label="(de algo)"
-                  value={this.state.hotels}
-                />
+              <div className="card mr-0 custom-card mb-4">
+                <div className="card-body">
+                      <h5 className="card-title mb-4 ">Buscador</h5>
+                      <input type='search' placeholder='Buscar por nombre...'></input>
+                  </div>  
+              </div>
+              <div className='row gx-3 gy-3'>
+              {currentItems.map((e, index) => {
+                return(
+                  <div className="col-12 col-md-4" key={index}>
+                  <PrecioCard
+                    header={e.name}
+                    src={e.image}
+                    alt={e.name}
+                    label={e.phone}
+                    value={e.address}
+                  />
+                  </div>
+                )
+              })}
+              </div> 
               </div>
             </div>
-            <div className="col-12">
-              <div className="card custom-card mb-5 mb-xs-4">
-                <div className="card-body">
-                  {this.state.showChart ? (
-                    <ReactFC
-                      {...this.chartConfigs}
-                      dataSource={this.state.dataSource}
-                      onRender={this.getChartRef.bind(this)}
-                    />
-                  ) : null}
-                </div>
-              </div>
+           
+            {/* Paginación */}
+            <div className="pagination justify-content-center m-4">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => this.handlePageChange(i + 1)}
+                  className={`btn btn-primary mx-1 ${currentPage === i + 1 ? 'active' : ''}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
             </div>
           </div>
         );
