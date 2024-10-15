@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.css": "/estadisticas/static/css/main.a8182de2.css",
+    "main.js": "/estadisticas/static/js/main.540065e7.js",
+    "index.html": "/estadisticas/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.a8182de2.css",
+    "static/js/main.540065e7.js"
+  ]
+}
