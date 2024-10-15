@@ -25,9 +25,12 @@ body {
 }
 
 .card-body img {
-    width: 120px;
+    width: 150px;
 }
 
+.input-group {
+    gap: 15px;
+}
 .info {
     display: flex;
     gap: 10px;
@@ -60,6 +63,12 @@ body {
     }
     .mb-xs-4 {
         margin-bottom: 2rem !important;
+    }
+    .input-group {
+        flex-direction: column;
+    }
+    .input-group input, .input-group select {
+        width: 100% !important;
     }
 }
 

@@ -20,7 +20,8 @@ class Body extends React.Component {
                 cuantos: '-',
                 ok: "",
                 hotels: '-',
-                showChart: false,
+                search: '',
+                sortOrder: 'asc',
                 initValue: 0,
                 dataSource : {
                     "chart": {
@@ -64,10 +65,17 @@ class Body extends React.Component {
         this.getDataFor("hotels");
     }
 
-     // Método para cambiar de página
-     handlePageChange = (pageNumber) => {
+    handlePageChange = (pageNumber) => {
       this.setState({ currentPage: pageNumber });
-     }
+    }
+
+    handleSearchChange = (event) => {
+      this.setState({ search: event.target.value, currentPage: 1 }); // Reiniciar a la página 1 en cada búsqueda
+    };
+
+    handleSortChange = (event) => {
+      this.setState({ sortOrder: event.target.value });
+    };
 
     getDataFor(prop) {
         fetch(this.BASE_URL, {
@@ -82,7 +90,6 @@ class Body extends React.Component {
                 dataSource.chart.yAxisMinValue = parseInt(d.length)
                 dataSource.dataset[0]["data"][0].value = d.length;
                 this.setState({
-                    showChart: true,
                     dataSource: dataSource,
                     initValue: d.length
                 });
@@ -112,38 +119,71 @@ class Body extends React.Component {
         this.chartRef = chart;
       }
       render() {
-        const { content, currentPage, itemsPerPage } = this.state;
+        let { content, currentPage, itemsPerPage, search, sortOrder } = this.state;
 
-    // Calcular los índices de los elementos a mostrar
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage; 
-    const currentItems = content.slice(indexOfFirstItem, indexOfLastItem); 
+        // Filtrar los elementos según el término de búsqueda
+        let filteredItems = content.filter(item =>
+          item.name && item.name.toLowerCase().includes(search.toLowerCase())
+        );
 
-    const totalPages = Math.ceil(content.length / itemsPerPage);
-        return (
+        // Ordenar los elementos filtrados
+        if (sortOrder === 'asc') {
+          filteredItems.sort((a, b) => a.name.localeCompare(b.name)); // A - Z
+        } else if (sortOrder === 'desc') {
+          filteredItems.sort((a, b) => b.name.localeCompare(a.name)); // Z - A
+        }
+      
+        // Calcular los índices de los elementos a mostrar
+        let indexOfLastItem = currentPage * itemsPerPage;
+        let indexOfFirstItem = indexOfLastItem - itemsPerPage; 
+        let currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem); 
+        let totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+      return (
           <div className="row mt-5 mt-xs-4">
             <div className="col-12 mb-3">
               <div className="card-deck custom-card-deck">
               <div className="card mr-0 custom-card mb-4">
                 <div className="card-body">
-                      <h5 className="card-title mb-4 ">Buscador</h5>
-                      <input type='search' placeholder='Buscar por nombre...'></input>
+                      <h5 className="card-title mb-4">Buscador</h5>
+                      <div className='input-group'>
+                        <input 
+                        type='search' 
+                        className="form-control" 
+                        placeholder='Buscar por nombre...'
+                        value={search}
+                        onChange={this.handleSearchChange}/>
+                        <select 
+                          className="form-select" 
+                          aria-label="orden" 
+                          value={sortOrder}
+                          onChange={this.handleSortChange}
+                        >
+                          <option selected>Ordenar por:</option>
+                          <option value="1">A - Z</option>
+                          <option value="2">Z - A</option>
+                        </select>
+                       
+                      </div>
                   </div>  
               </div>
               <div className='row gx-3 gy-3'>
-              {currentItems.map((e, index) => {
-                return(
-                  <div className="col-12 col-md-4" key={index}>
-                  <PrecioCard
-                    header={e.name}
-                    src={e.image}
-                    alt={e.name}
-                    label={e.phone}
-                    value={e.address}
-                  />
-                  </div>
-                )
-              })}
+                {currentItems.length > 0 ? (
+                  currentItems.map((e, index) => (
+                    <div className="col-12 col-md-4" key={index}>
+                       <PrecioCard
+                        header={e.name}
+                        src={e.image}
+                        alt={e.name}
+                        label={e.phone}
+                        value={e.address}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-12">No se encontraron resultados.</div> // Mensaje si no hay resultados
+                )}
+              
               </div> 
               </div>
             </div>
