@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/estadisticas/static/css/main.a8182de2.css",
-    "main.js": "/estadisticas/static/js/main.540065e7.js",
+    "main.css": "/estadisticas/static/css/main.21758a4d.css",
+    "main.js": "/estadisticas/static/js/main.d3ff14dd.js",
     "index.html": "/estadisticas/index.html"
   },
   "entrypoints": [
-    "static/css/main.a8182de2.css",
-    "static/js/main.540065e7.js"
+    "static/css/main.21758a4d.css",
+    "static/js/main.d3ff14dd.js"
   ]
 }
